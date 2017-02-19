@@ -1,0 +1,722 @@
+### Eclipse Workspace Patch 1.0
+#P betaflight
+diff --git src/main/drivers/accgyro_mpu6500.h src/main/drivers/accgyro_mpu6500.h
+index 3cedd20..e1b5483 100644
+--- src/main/drivers/accgyro_mpu6500.h
++++ src/main/drivers/accgyro_mpu6500.h
+@@ -19,6 +19,7 @@
+ 
+ #define MPU6500_WHO_AM_I_CONST              (0x70)
+ #define MPU9250_WHO_AM_I_CONST              (0x71)
++#define MPU9255_WHO_AM_I_CONST              (0x73)
+ #define ICM20608G_WHO_AM_I_CONST            (0xAF)
+ #define ICM20602_WHO_AM_I_CONST             (0x12)
+ 
+diff --git src/main/drivers/accgyro_spi_mpu6500.c src/main/drivers/accgyro_spi_mpu6500.c
+old mode 100755
+new mode 100644
+index 8a5eab9..4cd98d8
+--- src/main/drivers/accgyro_spi_mpu6500.c
++++ src/main/drivers/accgyro_spi_mpu6500.c
+@@ -90,6 +90,7 @@
+         mpuDetected = MPU_65xx_SPI;
+         break;
+     case MPU9250_WHO_AM_I_CONST:
++    case MPU9255_WHO_AM_I_CONST:
+         mpuDetected = MPU_9250_SPI;
+         break;
+     case ICM20608G_WHO_AM_I_CONST:
+diff --git src/main/drivers/rx_a7105.c src/main/drivers/rx_a7105.c
+new file mode 100644
+index 0000000..0899a34
+--- /dev/null
++++ src/main/drivers/rx_a7105.c
+@@ -0,0 +1,111 @@
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdlib.h>
++
++#include <platform.h>
++
++#ifdef USE_RX_FLYSKY
++
++#include "drivers/rx_a7105.h"
++#include "bus_spi.h"
++#include "rx_spi.h"
++#include "io.h"
++#include "io_impl.h"
++
++
++static IO_t rxIntIO;
++
++
++
++void A7105_Init (void)
++{
++    const SPIDevice rxSPIDevice = spiDeviceByInstance(RX_SPI_INSTANCE);
++    // config receiver IRQ pin
++    rxIntIO = IOGetByTag(IO_TAG(RX_IRQ_PIN));
++    IOInit(rxIntIO, OWNER_RX_SPI_CS, rxSPIDevice + 1);
++    IOConfigGPIO(rxIntIO, IOCFG_IPU);
++}
++
++
++
++bool A7105_HaveNewData (void)
++{
++	bool result = false;
++	if ( IORead (rxIntIO) == 0)									// RX finished
++	{
++		if ( (A7105_ReadReg (A7105_00_MODE) & (1 << 5)) == 0)		// CRC pass
++		{
++			result = true;
++		}
++		else													// CRC error
++		{
++			A7105_Strobe (A7105_RST_RDPTR);						// FIFO Read Pointer Reset
++			A7105_Strobe (A7105_RX);								// RX Mode
++		}
++	}
++	return result;
++}
++
++
++void A7105_SoftReset (void)
++{
++	rxSpiWriteCommand ((uint8_t)A7105_00_MODE, 0x00);
++}
++
++
++uint8_t A7105_ReadReg (a7105_reg_t reg)
++{
++	return rxSpiReadCommand( (uint8_t)reg | 0x40, 0xFF);
++}
++
++
++void A7105_WriteReg (a7105_reg_t reg, uint8_t data)
++{
++	rxSpiWriteCommand ((uint8_t)reg, data);
++}
++
++
++void A7105_Strobe (a7105_state_t st)
++{
++	rxSpiWriteByte ((uint8_t)st);
++}
++
++
++void A7105_WriteID(uint32_t id)
++{
++	uint8_t data[4];
++	data[0] = (id >> 24) & 0xFF;
++	data[1] = (id >> 16) & 0xFF;
++	data[2] = (id >> 8) & 0xFF;
++	data[3] = (id >> 0) & 0xFF;
++	rxSpiWriteCommandMulti ((uint8_t)A7105_06_ID_DATA, &data[0], sizeof(data));
++}
++
++
++uint32_t A7105_ReadID (void)
++{
++	uint32_t id;
++	uint8_t data[4];
++	rxSpiReadCommandMulti ( (uint8_t)A7105_06_ID_DATA | 0x40, 0xFF, &data[0], sizeof(data));
++	id  = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3] << 0;
++	return id;
++}
++
++
++void A7105_ReadFIFO (uint8_t *data, uint8_t num)
++{
++	if(num > 64) num = 64;
++	rxSpiReadCommandMulti ( (uint8_t)A7105_05_FIFO_DATA | 0x40, 0xFF, data, num);
++}
++
++
++void A7105_SetChannel (uint8_t chan)
++{
++	A7105_Strobe(A7105_STANDBY);
++	A7105_Strobe(A7105_RST_RDPTR);
++	A7105_WriteReg(A7105_0F_CHANNEL, chan);
++	A7105_Strobe(A7105_RX);
++}
++
++
++#endif /* USE_RX_FLYSKY */
+diff --git src/main/drivers/rx_a7105.h src/main/drivers/rx_a7105.h
+new file mode 100644
+index 0000000..e358dc7
+--- /dev/null
++++ src/main/drivers/rx_a7105.h
+@@ -0,0 +1,97 @@
++#ifndef _RX_A7105_
++#define _RX_A7105_
++
++
++/**
++ * A7105 states for strobe
++ */
++typedef enum
++{
++    A7105_SLEEP     = 0x80,
++    A7105_IDLE      = 0x90,
++    A7105_STANDBY   = 0xA0,
++    A7105_PLL       = 0xB0,
++    A7105_RX        = 0xC0,
++    A7105_TX        = 0xD0,
++    A7105_RST_WRPTR = 0xE0,
++    A7105_RST_RDPTR = 0xF0
++} a7105_state_t;
++
++
++/**
++ * Register addresses
++ */
++typedef enum
++{
++    A7105_00_MODE         = 0x00,
++    A7105_01_MODE_CONTROL = 0x01,
++    A7105_02_CALC         = 0x02,
++    A7105_03_FIFOI        = 0x03,
++    A7105_04_FIFOII       = 0x04,
++    A7105_05_FIFO_DATA    = 0x05,
++    A7105_06_ID_DATA      = 0x06,
++    A7105_07_RC_OSC_I     = 0x07,
++    A7105_08_RC_OSC_II    = 0x08,
++    A7105_09_RC_OSC_III   = 0x09,
++    A7105_0A_CK0_PIN      = 0x0A,
++    A7105_0B_GPIO1_PIN_I  = 0x0B,
++    A7105_0C_GPIO2_PIN_II = 0x0C,
++    A7105_0D_CLOCK        = 0x0D,
++    A7105_0E_DATA_RATE    = 0x0E,
++    A7105_0F_PLL_I        = 0x0F,
++    A7105_10_PLL_II       = 0x10,
++    A7105_11_PLL_III      = 0x11,
++    A7105_12_PLL_IV       = 0x12,
++    A7105_13_PLL_V        = 0x13,
++    A7105_14_TX_I         = 0x14,
++    A7105_15_TX_II        = 0x15,
++    A7105_16_DELAY_I      = 0x16,
++    A7105_17_DELAY_II     = 0x17,
++    A7105_18_RX           = 0x18,
++    A7105_19_RX_GAIN_I    = 0x19,
++    A7105_1A_RX_GAIN_II   = 0x1A,
++    A7105_1B_RX_GAIN_III  = 0x1B,
++    A7105_1C_RX_GAIN_IV   = 0x1C,
++    A7105_1D_RSSI_THOLD   = 0x1D,
++    A7105_1E_ADC          = 0x1E,
++    A7105_1F_CODE_I       = 0x1F,
++    A7105_20_CODE_II      = 0x20,
++    A7105_21_CODE_III     = 0x21,
++    A7105_22_IF_CALIB_I   = 0x22,
++    A7105_23_IF_CALIB_II  = 0x23,
++    A7105_24_VCO_CURCAL   = 0x24,
++    A7105_25_VCO_SBCAL_I  = 0x25,
++    A7105_26_VCO_SBCAL_II = 0x26,
++    A7105_27_BATTERY_DET  = 0x27,
++    A7105_28_TX_TEST      = 0x28,
++    A7105_29_RX_DEM_TEST_I  = 0x29,
++    A7105_2A_RX_DEM_TEST_II = 0x2A,
++    A7105_2B_CPC          = 0x2B,
++    A7105_2C_XTAL_TEST    = 0x2C,
++    A7105_2D_PLL_TEST     = 0x2D,
++    A7105_2E_VCO_TEST_I   = 0x2E,
++    A7105_2F_VCO_TEST_II  = 0x2F,
++    A7105_30_IFAT         = 0x30,
++    A7105_31_RSCALE       = 0x31,
++    A7105_32_FILTER_TEST  = 0x32,
++} a7105_reg_t;
++
++#define A7105_0F_CHANNEL A7105_0F_PLL_I
++
++
++void A7105_Init (void);
++void A7105_SoftReset (void);
++
++uint8_t A7105_ReadReg (a7105_reg_t reg);
++void A7105_WriteReg (a7105_reg_t reg, uint8_t data);
++void A7105_Strobe (a7105_state_t st);
++
++void A7105_WriteID(uint32_t id);
++uint32_t A7105_ReadID (void);
++
++bool A7105_HaveNewData (void);
++void A7105_ReadFIFO (uint8_t *data, uint8_t num);
++void A7105_SetChannel (uint8_t chan);
++
++
++#endif /* _RX_A7105_ */
+diff --git src/main/drivers/rx_spi.c src/main/drivers/rx_spi.c
+index d37a91f..35ad1b2 100644
+--- src/main/drivers/rx_spi.c
++++ src/main/drivers/rx_spi.c
+@@ -69,6 +69,7 @@
+     UNUSED(spiType);
+     const SPIDevice rxSPIDevice = spiDeviceByInstance(RX_SPI_INSTANCE);
+     IOInit(DEFIO_IO(RX_NSS_PIN), OWNER_SPI_CS, rxSPIDevice + 1);
++    IOConfigGPIO(DEFIO_IO(RX_NSS_PIN), SPI_IO_CS_CFG);
+ #endif // USE_RX_SOFTSPI
+ 
+     DISABLE_RX();
+diff --git src/main/rx/flysky.c src/main/rx/flysky.c
+new file mode 100644
+index 0000000..ac4545e
+--- /dev/null
++++ src/main/rx/flysky.c
+@@ -0,0 +1,198 @@
++
++#include <stdbool.h>
++#include <stdint.h>
++#include <string.h>
++
++#include "platform.h"
++
++#ifdef USE_RX_FLYSKY
++
++#include "build/build_config.h"
++#include "build/debug.h"
++
++#include "common/utils.h"
++#include "config/config_master.h"
++#include "fc/config.h"
++
++#include "rx/rx.h"
++#include "rx/rx_spi.h"
++#include "drivers/rx_a7105.h"
++#include "rx/flysky.h"
++
++#include "drivers/system.h"
++
++#include "drivers/io.h"
++
++
++#define FLYSKY_CHANNEL_COUNT	8
++#define FLYSKY_PAYLOAD_SIZE		21
++
++
++static const uint8_t A7105_regs[] = {
++  0xff, 0x42, 0x00, 0x14, 0x00, 0xff, 0xff , 0x00, 0x00, 0x00, 0x00, 0x01, /*0x21*/0x19, 0x05, 0x00, 0x50,
++  0x9e, 0x4b, 0x00, 0x02, 0x16, 0x2b, 0x12, 0x00, 0x62, 0x80, 0x80, 0x00, 0x0a, 0x32, 0xc3, 0x0f,
++  0x13, 0xc3, 0x00, 0xff, 0x00, 0x00, 0x3b, 0x00, 0x17, 0x47, 0x80, 0x03, 0x01, 0x45, 0x18, 0x00,
++  0x01, 0x0f, 0xff,
++};
++
++
++static const uint8_t tx_channels[16][16] = {
++  {0x0a, 0x5a, 0x14, 0x64, 0x1e, 0x6e, 0x28, 0x78, 0x32, 0x82, 0x3c, 0x8c, 0x46, 0x96, 0x50, 0xa0},
++  {0xa0, 0x50, 0x96, 0x46, 0x8c, 0x3c, 0x82, 0x32, 0x78, 0x28, 0x6e, 0x1e, 0x64, 0x14, 0x5a, 0x0a},
++  {0x0a, 0x5a, 0x50, 0xa0, 0x14, 0x64, 0x46, 0x96, 0x1e, 0x6e, 0x3c, 0x8c, 0x28, 0x78, 0x32, 0x82},
++  {0x82, 0x32, 0x78, 0x28, 0x8c, 0x3c, 0x6e, 0x1e, 0x96, 0x46, 0x64, 0x14, 0xa0, 0x50, 0x5a, 0x0a},
++  {0x28, 0x78, 0x0a, 0x5a, 0x50, 0xa0, 0x14, 0x64, 0x1e, 0x6e, 0x3c, 0x8c, 0x32, 0x82, 0x46, 0x96},
++  {0x96, 0x46, 0x82, 0x32, 0x8c, 0x3c, 0x6e, 0x1e, 0x64, 0x14, 0xa0, 0x50, 0x5a, 0x0a, 0x78, 0x28},
++  {0x50, 0xa0, 0x28, 0x78, 0x0a, 0x5a, 0x1e, 0x6e, 0x3c, 0x8c, 0x32, 0x82, 0x46, 0x96, 0x14, 0x64},
++  {0x64, 0x14, 0x96, 0x46, 0x82, 0x32, 0x8c, 0x3c, 0x6e, 0x1e, 0x5a, 0x0a, 0x78, 0x28, 0xa0, 0x50},
++  {0x50, 0xa0, 0x46, 0x96, 0x3c, 0x8c, 0x28, 0x78, 0x0a, 0x5a, 0x32, 0x82, 0x1e, 0x6e, 0x14, 0x64},
++  {0x64, 0x14, 0x6e, 0x1e, 0x82, 0x32, 0x5a, 0x0a, 0x78, 0x28, 0x8c, 0x3c, 0x96, 0x46, 0xa0, 0x50},
++  {0x46, 0x96, 0x3c, 0x8c, 0x50, 0xa0, 0x28, 0x78, 0x0a, 0x5a, 0x1e, 0x6e, 0x32, 0x82, 0x14, 0x64},
++  {0x64, 0x14, 0x82, 0x32, 0x6e, 0x1e, 0x5a, 0x0a, 0x78, 0x28, 0xa0, 0x50, 0x8c, 0x3c, 0x96, 0x46},
++  {0x46, 0x96, 0x0a, 0x5a, 0x3c, 0x8c, 0x14, 0x64, 0x50, 0xa0, 0x28, 0x78, 0x1e, 0x6e, 0x32, 0x82},
++  {0x82, 0x32, 0x6e, 0x1e, 0x78, 0x28, 0xa0, 0x50, 0x64, 0x14, 0x8c, 0x3c, 0x5a, 0x0a, 0x96, 0x46},
++  {0x46, 0x96, 0x0a, 0x5a, 0x50, 0xa0, 0x3c, 0x8c, 0x28, 0x78, 0x1e, 0x6e, 0x32, 0x82, 0x14, 0x64},
++  {0x64, 0x14, 0x82, 0x32, 0x6e, 0x1e, 0x78, 0x28, 0x8c, 0x3c, 0xa0, 0x50, 0x5a, 0x0a, 0x96, 0x46},
++};
++
++
++static uint8_t rcv[FLYSKY_PAYLOAD_SIZE];
++static uint8_t tx_id[5];
++static uint8_t chanrow;
++static uint8_t chancol;
++static uint8_t chanoffset;
++
++
++static enum receiver_state
++{
++	NORMAL_STATE,
++	BIND_STATE
++} receiver_st;
++
++
++static void NextChannel (void);
++static void SetTXID (uint32_t txid);
++
++
++void FlySkyInit(const struct rxConfig_s *rxConfig, struct rxRuntimeConfig_s *rxRuntimeConfig)
++{
++	rxRuntimeConfig->channelCount = FLYSKY_CHANNEL_COUNT;
++
++	A7105_Init();
++	A7105_SoftReset();
++	A7105_WriteID(0x5475c52A);
++
++	for (uint8_t i = 0; i < 0x33; i++)
++	{
++		if (A7105_regs[i] != 0xFF)
++			A7105_WriteReg((a7105_reg_t)i, A7105_regs[i]);
++	}
++ 	A7105_Strobe(A7105_STANDBY);
++	A7105_WriteReg(A7105_02_CALC, 0x01);
++	while (A7105_ReadReg(A7105_02_CALC) != 0){}
++	A7105_ReadReg(A7105_22_IF_CALIB_I);
++
++	A7105_WriteReg(A7105_24_VCO_CURCAL, 0x13);
++	A7105_WriteReg(A7105_25_VCO_SBCAL_I, 0x09);
++	A7105_Strobe(A7105_STANDBY);
++
++
++	IO_t bindIO = IOGetByTag( IO_TAG(RX_FLYSKY_BIND) );
++	IOInit(bindIO, OWNER_RX_SPI_CS, 0);
++	IOConfigGPIO(bindIO, IOCFG_IPU);
++    delayMicroseconds(10);  							// allow configuration to settle
++
++    if ( !IORead(bindIO) )
++	{
++    	receiver_st = BIND_STATE;
++		A7105_SetChannel (0); 							// binding listen on channel 0
++	}
++	else
++	{
++		receiver_st = NORMAL_STATE;
++		SetTXID(rxConfig->rx_spi_id);
++	}
++}
++
++
++void FlySkySetRcDataFromPayload(uint16_t *rcData, const uint8_t *payload)
++{
++	for (uint8_t i = 0; i < FLYSKY_CHANNEL_COUNT; i++)
++		rcData[i] = payload[2 * i + 1] << 8 | payload [2 * i + 0];
++}
++
++
++
++rx_spi_received_e  FlySkyDataReceived(uint8_t *payload)
++{
++	static uint32_t timeout_flysky = 1600; 							// us
++	static uint32_t time_last_pkg_flysky = 0;
++	static uint16_t lost_pkg_flysky = 0;
++
++
++	if ( A7105_HaveNewData() )
++	{
++		A7105_ReadFIFO(&rcv[0], FLYSKY_PAYLOAD_SIZE);
++		if (receiver_st == NORMAL_STATE)
++		{
++			if ((rcv[1] == tx_id[1]) && (rcv[2] == tx_id[2]) && (rcv[3] == tx_id[3]) && (rcv[4] == tx_id[4]))
++			{
++				time_last_pkg_flysky = micros();
++				NextChannel();
++				lost_pkg_flysky = 0;
++				timeout_flysky = 1600;								// us
++				memcpy(payload, &rcv[5], 2*FLYSKY_CHANNEL_COUNT);
++				return RX_SPI_RECEIVED_DATA;
++			}
++		}
++		else if (receiver_st == BIND_STATE)
++		{
++			if (rcv[0] == 0xAA)
++			{
++				uint32_t txid = rcv[1] | rcv[2] << 8 | rcv[3] << 16 | rcv[4] << 24;
++				rxConfig()->rx_spi_id = txid;
++				writeEEPROM();
++		        readEEPROM();
++				SetTXID(txid);
++				receiver_st = NORMAL_STATE;
++			}
++		}
++	}
++
++	if ( micros() - time_last_pkg_flysky >= timeout_flysky && receiver_st == NORMAL_STATE)
++	{
++		NextChannel();
++		time_last_pkg_flysky =  micros();
++		if (lost_pkg_flysky < UINT16_MAX) lost_pkg_flysky++;
++		timeout_flysky = (lost_pkg_flysky < 120) ? 1500 : 1600;
++	}
++
++	return RX_SPI_RECEIVED_NONE;
++}
++
++
++static void SetTXID (uint32_t txid)
++{
++	tx_id[0] = 0xAA;
++	tx_id[1] = (uint8_t)(txid & 0xFF);
++	tx_id[2] = (uint8_t)((txid >> 8) & 0xFF);
++	tx_id[3] = (uint8_t)((txid >> 16) & 0xFF);
++	tx_id[4] = (uint8_t)((txid >> 24) & 0xFF);
++
++	chanrow = txid & 0x0F;
++	chanoffset = ((txid & 0xF0) >> 4) + 1;
++	chancol = 0;
++	if (chanoffset > 9) chanoffset = 9; 					//from sloped soarer findings, bug in flysky protocol
++}
++
++
++static void NextChannel (void)
++{
++	uint8_t channel = tx_channels[chanrow][chancol] - chanoffset;
++	chancol++;
++	chancol	&= 0x0F;
++	A7105_SetChannel(channel);
++}
++
++
++#endif /* USE_RX_FLYSKY */
+diff --git src/main/rx/flysky.h src/main/rx/flysky.h
+new file mode 100644
+index 0000000..cb8a3bc
+--- /dev/null
++++ src/main/rx/flysky.h
+@@ -0,0 +1,10 @@
++#ifndef SRC_MAIN_RX_FLYSKY_H_
++#define SRC_MAIN_RX_FLYSKY_H_
++
++
++void FlySkyInit(const struct rxConfig_s *rxConfig, struct rxRuntimeConfig_s *rxRuntimeConfig);
++void FlySkySetRcDataFromPayload(uint16_t *rcData, const uint8_t *payload);
++rx_spi_received_e FlySkyDataReceived(uint8_t *payload);
++
++
++#endif /* SRC_MAIN_RX_FLYSKY_H_ */
+diff --git src/main/rx/rx_spi.c src/main/rx/rx_spi.c
+index ac4764f..d4fbfcd 100644
+--- src/main/rx/rx_spi.c
++++ src/main/rx/rx_spi.c
+@@ -37,6 +37,7 @@
+ #include "rx/nrf24_v202.h"
+ #include "rx/nrf24_h8_3d.h"
+ #include "rx/nrf24_inav.h"
++#include "rx/flysky.h"
+ 
+ 
+ uint16_t rxSpiRcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
+@@ -106,6 +107,13 @@
+         protocolSetRcDataFromPayload = inavNrf24SetRcDataFromPayload;
+         break;
+ #endif
++#ifdef USE_RX_FLYSKY
++    case RX_SPI_A7105_FLYSKY:
++        protocolInit = FlySkyInit;
++        protocolDataReceived = FlySkyDataReceived;
++        protocolSetRcDataFromPayload = FlySkySetRcDataFromPayload;
++        break;
++#endif
+     }
+     return true;
+ }
+diff --git src/main/rx/rx_spi.h src/main/rx/rx_spi.h
+index c858279..66f4745 100644
+--- src/main/rx/rx_spi.h
++++ src/main/rx/rx_spi.h
+@@ -29,6 +29,7 @@
+     RX_SPI_NRF24_CX10A,
+     RX_SPI_NRF24_H8_3D,
+     RX_SPI_NRF24_INAV,
++	RX_SPI_A7105_FLYSKY,
+     RX_SPI_PROTOCOL_COUNT
+ } rx_spi_protocol_e;
+ 
+diff --git src/main/target/EACHI/target.c src/main/target/EACHI/target.c
+new file mode 100644
+index 0000000..7ea929f
+--- /dev/null
++++ src/main/target/EACHI/target.c
+@@ -0,0 +1,32 @@
++/*
++ * This file is part of Cleanflight.
++ *
++ * Cleanflight is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * Cleanflight is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with Cleanflight.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <stdint.h>
++
++#include <platform.h>
++#include "drivers/io.h"
++
++#include "drivers/timer.h"
++
++const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
++    { TIM2, IO_TAG(PA3), TIM_Channel_4, TIM_USE_PPM, 0, },   	// PPM IN
++	{ TIM4, IO_TAG(PB8), TIM_Channel_3, TIM_USE_MOTOR, 1, }, 	// M1_OUT
++    { TIM4, IO_TAG(PB9), TIM_Channel_4, TIM_USE_MOTOR, 1, }, 	// M2_OUT
++    { TIM4, IO_TAG(PB6), TIM_Channel_1, TIM_USE_MOTOR, 1, }, 	// M3_OUT
++    { TIM4, IO_TAG(PB7), TIM_Channel_2, TIM_USE_MOTOR, 1, } 	// M4_OUT
++};
++
+diff --git src/main/target/EACHI/target.h src/main/target/EACHI/target.h
+new file mode 100644
+index 0000000..3ca1fd7
+--- /dev/null
++++ src/main/target/EACHI/target.h
+@@ -0,0 +1,114 @@
++/*
++ * This file is part of Cleanflight.
++ *
++ * Cleanflight is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * Cleanflight is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with Cleanflight.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#define TARGET_BOARD_IDENTIFIER "EACHI"
++
++
++#define LED0                    PB3
++
++#define BEEPER                	PA2
++//#define BEEPER_OPT            PA2
++
++#define USE_EXTI
++#define MPU_INT_EXTI            PA4
++#define USE_MPU_DATA_READY_SIGNAL
++
++#define USE_SPI
++#define USE_SPI_DEVICE_2
++#define USE_SPI_DEVICE_1
++
++
++#define MPU6500_SPI_INSTANCE    SPI1
++#define MPU6500_CS_GPIO         GPIOB
++#define MPU6500_CS_PIN          PB0
++#define MPU6500_CS_GPIO_CLK_PERIPHERAL RCC_APB2Periph_GPIOB
++
++
++#define GYRO
++#define USE_GYRO_SPI_MPU6500
++
++#define ACC
++#define USE_ACC_SPI_MPU6500
++
++
++#define USE_RX_FLYSKY
++
++#ifdef USE_RX_FLYSKY
++#define USE_RX_SPI
++#define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
++#define RX_SPI_DEFAULT_PROTOCOL RX_SPI_A7105_FLYSKY
++#define RX_SPI_INSTANCE         SPI2
++#define RX_IRQ_PIN				PB12
++#define SPI2_NSS_PIN    		PA8
++#define SPI2_SCK_PIN    		PB13
++#define SPI2_MISO_PIN   		PB14
++#define SPI2_MOSI_PIN   		PB15
++#define RX_NSS_PIN              SPI2_NSS_PIN
++#define RX_FLYSKY_BIND			PA3
++
++#else
++
++#define DEFAULT_RX_FEATURE      FEATURE_RX_PPM
++
++#endif
++
++
++//#define USE_I2C
++//#define I2C_DEVICE (I2CDEV_2) // Flex port - SCL/PB10, SDA/PB11
++
++#define USE_VCP
++//#define USE_UART1
++//#define USE_UART3
++
++#define SERIAL_PORT_COUNT       1 //2 //3
++
++#ifdef USE_UART1_RX_DMA
++#undef USE_UART1_RX_DMA
++#endif
++
++//#define UART3_RX_PIN            PB11
++//#define UART3_TX_PIN            PB10
++
++
++#define USE_ADC
++#define VBAT_ADC_PIN            PA0
++#define VBAT_SCALE_DEFAULT      20
++
++
++#undef GPS
++#undef MAG
++#undef BARO
++#undef SONAR
++#undef LED_STRIP
++#undef USE_SERIAL_4WAY_BLHELI_INTERFACE
++#undef USE_SERVOS
++#undef BLACKBOX
++
++#define SKIP_CLI_COMMAND_HELP
++#define CLI_MINIMAL_VERBOSITY
++#define BRUSHED_MOTORS
++#define DEFAULT_FEATURES        (FEATURE_MOTOR_STOP | FEATURE_VBAT)
++
++
++
++// IO - from schematics
++#define TARGET_IO_PORTA         0xffff
++#define TARGET_IO_PORTB         0xffff
++#define TARGET_IO_PORTC         ( BIT(14) )
++
++#define USABLE_TIMER_CHANNEL_COUNT 5
++#define USED_TIMERS             ( TIM_N(2) | TIM_N(4) )
+diff --git src/main/target/EACHI/target.mk src/main/target/EACHI/target.mk
+new file mode 100644
+index 0000000..e466736
+--- /dev/null
++++ src/main/target/EACHI/target.mk
+@@ -0,0 +1,11 @@
++F1_TARGETS  += $(TARGET)
++FEATURES    = VCP
++
++TARGET_SRC = \
++            drivers/accgyro_mpu.c \
++            drivers/accgyro_mpu6500.c \
++            drivers/accgyro_spi_mpu6500.c \
++            drivers/rx_a7105.c \
++            rx/flysky.c \
++            
++            
+\ No newline at end of file
+diff --git us.stackdump us.stackdump
+new file mode 100644
+index 0000000..1ad852d
+--- /dev/null
++++ us.stackdump
+@@ -0,0 +1,21 @@
++MSYS-1.0.19 Build:2016-07-13 17:45
++Exception: STATUS_ACCESS_VIOLATION at eip=77152239
++eax=00579B70 ebx=FFFFFFFA ecx=FFFFFFFE edx=00000004 esi=002C0114 edi=002C0118
++ebp=0022F3F0 esp=0022F3A0 program=us
++cs=001B ds=0023 es=0023 fs=003B gs=0000 ss=0023
++Stack trace:
++Frame     Function  Args
++0022F3F0  77152239  (00000000, 00000000, 00000022, 002D0F38)
++0022F418  77152148  (002C0114, 00000000, 00000000, 00000000)
++0022F6A8  6083D77B  (002C0000, 002D0F38, 608AAB21, 00000022)
++0022FD38  6083CE16  (002C0000, 000F003F, 00012000, 002C0000)
++0022FD78  6083D268  (002C0000, 608F0104, 00011044, 00000000)
++0022FEC8  60855039  (6089C6C8, 00000000, FFFFFFFE, 77179F3C)
++0022FF18  60804035  (6089C740, FFFFFFFE, 00000034, 6089C6A4)
++0022FF58  60804955  (00000000, 00000000, 00000000, 00000000)
++0022FF78  0040594F  (00401170, 037F0000, 0022FF94, 76FF3C45)
++0022FF88  0040103E  (7FFDF000, 0022FFD4, 771837F5, 7FFDF000)
++0022FF94  76FF3C45  (7FFDF000, 74EC92C1, 00000000, 00000000)
++0022FFD4  771837F5  (00401000, 7FFDF000, 00000000, 00000000)
++0022FFEC  771837C8  (00401000, 7FFDF000, 00000000, 78746341)
++End of stack trace
+\ No newline at end of file
