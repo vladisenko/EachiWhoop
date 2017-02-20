@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -3141,7 +3141,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <part name="Q5" library="cc3d" deviceset="NMOSSOT23" device="" value="SI2312"/>
 <part name="R14" library="RC.v2" deviceset="R" device="0402" value="10k"/>
 <part name="GND24" library="supply1" deviceset="GND" device=""/>
-<part name="C23" library="RC.v2" deviceset="C" device="0805" value="2u2"/>
+<part name="C23" library="RC.v2" deviceset="C" device="0805" value="4u7"/>
 <part name="C3" library="RC.v2" deviceset="C" device="0402" value="0u1"/>
 <part name="PAD2" library="pad" deviceset="SMD2" device="" value="VCC"/>
 <part name="PAD3" library="pad" deviceset="SMD2" device="" value="GND"/>
@@ -3149,7 +3149,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <part name="D1" library="SparkFun-DiscreteSemi" deviceset="BAT20JFILM" device="" value="BAT54"/>
 <part name="IC1" library="semi" deviceset="MCP1703" device="CB"/>
 <part name="GND25" library="supply1" deviceset="GND" device=""/>
-<part name="C4" library="RC.v2" deviceset="C" device="0805" value="u47"/>
+<part name="C4" library="RC.v2" deviceset="C" device="0805" value="4u7"/>
 <part name="GND26" library="supply1" deviceset="GND" device=""/>
 <part name="GND27" library="supply1" deviceset="GND" device=""/>
 <part name="C5" library="RC.v2" deviceset="C" device="0402" value="47n"/>
@@ -3161,8 +3161,8 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <part name="X4" library="con-molex" deviceset="53?-02" device="047" value="M3"/>
 <part name="X3" library="con-molex" deviceset="53?-02" device="047" value="M2"/>
 <part name="X5" library="con-molex" deviceset="53?-02" device="047" value="M1"/>
-<part name="U$1" library="invensense" deviceset="MPU-9250" device=""/>
-<part name="U1" library="A7105" deviceset="A7105" device=""/>
+<part name="IC3" library="invensense" deviceset="MPU-9250" device="" value="MPU6500"/>
+<part name="IC4" library="A7105" deviceset="A7105" device=""/>
 <part name="C8" library="RC.v2" deviceset="C" device="0402" value="0u1"/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="C2" library="RC.v2" deviceset="C" device="0402" value="10n"/>
@@ -3217,13 +3217,13 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="GND2" gate="1" x="113.03" y="0" rot="R90"/>
 <instance part="R4" gate="G$1" x="48.26" y="63.5" rot="R90"/>
 <instance part="GND5" gate="1" x="66.04" y="33.02" rot="R270"/>
-<instance part="GND6" gate="1" x="58.42" y="71.12" rot="R270"/>
+<instance part="GND6" gate="1" x="57.15" y="71.12" rot="R270"/>
 <instance part="GND7" gate="1" x="144.78" y="86.36" rot="R90"/>
 <instance part="GND8" gate="1" x="146.05" y="55.88" rot="R90"/>
 <instance part="R9" gate="G$1" x="142.24" y="66.04"/>
 <instance part="LED1" gate="G$1" x="152.4" y="66.04" rot="R270"/>
-<instance part="GND9" gate="1" x="12.7" y="78.74" rot="MR0"/>
-<instance part="R3" gate="G$1" x="36.83" y="101.6" rot="MR0"/>
+<instance part="GND9" gate="1" x="12.7" y="73.66" rot="MR0"/>
+<instance part="R3" gate="G$1" x="26.67" y="93.98" rot="MR0"/>
 <instance part="R5" gate="G$1" x="55.88" y="95.25"/>
 <instance part="R6" gate="G$1" x="55.88" y="87.63" rot="MR0"/>
 <instance part="GND10" gate="1" x="49.53" y="85.09"/>
@@ -3251,14 +3251,23 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="C3" gate="G$1" x="41.91" y="-7.62"/>
 <instance part="PAD2" gate="1" x="138.43" y="111.76" rot="MR0"/>
 <instance part="PAD3" gate="1" x="138.43" y="102.87" rot="MR0"/>
-<instance part="Q1" gate="A" x="21.59" y="127" rot="MR270"/>
-<instance part="D1" gate="G$1" x="27.94" y="134.62"/>
+<instance part="Q1" gate="A" x="21.59" y="127" smashed="yes" rot="MR270">
+<attribute name="VALUE" x="25.4" y="125.73" size="1.778" layer="96" rot="MR180"/>
+<attribute name="NAME" x="25.4" y="129.54" size="1.778" layer="95" rot="MR180"/>
+</instance>
+<instance part="D1" gate="G$1" x="27.94" y="134.62" smashed="yes">
+<attribute name="NAME" x="25.4" y="140.1826" size="1.778" layer="95"/>
+<attribute name="VALUE" x="25.4" y="137.3886" size="1.778" layer="96"/>
+</instance>
 <instance part="IC1" gate="G$1" x="48.26" y="134.62"/>
 <instance part="GND25" gate="1" x="48.26" y="123.19"/>
 <instance part="C4" gate="G$1" x="62.23" y="130.81" rot="R90"/>
 <instance part="GND26" gate="1" x="62.23" y="125.73"/>
 <instance part="GND27" gate="1" x="48.26" y="78.74" rot="R270"/>
-<instance part="C5" gate="G$1" x="67.31" y="73.66"/>
+<instance part="C5" gate="G$1" x="67.31" y="73.66" smashed="yes">
+<attribute name="NAME" x="60.96" y="74.168" size="1.778" layer="95" font="vector" align="bottom-center"/>
+<attribute name="VALUE" x="60.96" y="73.152" size="1.778" layer="96" font="vector" align="top-center"/>
+</instance>
 <instance part="PAD4" gate="1" x="144.78" y="111.76"/>
 <instance part="PAD5" gate="1" x="144.78" y="102.87"/>
 <instance part="JP1" gate="G$1" x="6.35" y="114.3"/>
@@ -3271,8 +3280,8 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="X3" gate="-2" x="187.96" y="82.55"/>
 <instance part="X5" gate="-1" x="212.09" y="90.17"/>
 <instance part="X5" gate="-2" x="212.09" y="82.55"/>
-<instance part="U$1" gate="G$1" x="80.01" y="0"/>
-<instance part="U1" gate="G$1" x="175.26" y="3.81"/>
+<instance part="IC3" gate="G$1" x="80.01" y="0"/>
+<instance part="IC4" gate="G$1" x="175.26" y="3.81"/>
 <instance part="C8" gate="G$1" x="107.95" y="-6.35" rot="R90"/>
 <instance part="GND1" gate="1" x="41.91" y="-17.78"/>
 <instance part="C2" gate="G$1" x="41.91" y="0"/>
@@ -3282,7 +3291,10 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="Q6" gate="G$1" x="208.28" y="38.1"/>
 <instance part="R15" gate="G$1" x="198.12" y="31.75" rot="R90"/>
 <instance part="GND15" gate="1" x="208.28" y="24.13"/>
-<instance part="D2" gate="G$1" x="208.28" y="48.26" rot="R90"/>
+<instance part="D2" gate="G$1" x="208.28" y="48.26" smashed="yes" rot="R90">
+<attribute name="NAME" x="210.82" y="51.2826" size="1.778" layer="95"/>
+<attribute name="VALUE" x="210.82" y="48.4886" size="1.778" layer="96"/>
+</instance>
 <instance part="PAD6" gate="1" x="196.85" y="53.34"/>
 <instance part="PAD7" gate="1" x="196.85" y="44.45"/>
 <instance part="R1" gate="G$1" x="26.67" y="118.11" rot="MR0"/>
@@ -3292,7 +3304,10 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="JP2" gate="G$1" x="6.35" y="46.99"/>
 <instance part="X1" gate="-1" x="7.62" y="123.19" rot="MR0"/>
 <instance part="X1" gate="-2" x="7.62" y="109.22" rot="MR0"/>
-<instance part="Y1" gate="G$1" x="59.69" y="78.74" rot="R270"/>
+<instance part="Y1" gate="G$1" x="59.69" y="78.74" smashed="yes" rot="R270">
+<attribute name="NAME" x="62.23" y="79.756" size="1.778" layer="95"/>
+<attribute name="VALUE" x="62.23" y="77.47" size="1.778" layer="96"/>
+</instance>
 <instance part="Y2" gate="G$1" x="180.34" y="-30.48"/>
 <instance part="C19" gate="G$1" x="173.99" y="-34.29" rot="R90"/>
 <instance part="C20" gate="G$1" x="189.23" y="-34.29" rot="R90"/>
@@ -3313,11 +3328,11 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <instance part="GND20" gate="1" x="193.04" y="-25.4"/>
 <instance part="GND28" gate="1" x="161.29" y="24.13"/>
 <instance part="C17" gate="G$1" x="166.37" y="35.56"/>
-<instance part="J1" gate="G$1" x="7.62" y="92.71" rot="MR0"/>
-<instance part="L1" gate="G$1" x="138.43" y="-1.27" rot="R90"/>
-<instance part="GND29" gate="1" x="138.43" y="-8.89"/>
+<instance part="J1" gate="G$1" x="7.62" y="87.63" rot="MR0"/>
+<instance part="L1" gate="G$1" x="135.89" y="-1.27" rot="R90"/>
+<instance part="GND29" gate="1" x="135.89" y="-8.89"/>
 <instance part="GND30" gate="1" x="15.24" y="43.18"/>
-<instance part="PAD1" gate="P" x="138.43" y="8.89" rot="R270"/>
+<instance part="PAD1" gate="P" x="135.89" y="8.89" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -3326,7 +3341,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <segment>
 <pinref part="GND6" gate="1" pin="GND"/>
 <pinref part="IC2" gate="G$1" pin="VSSA"/>
-<wire x1="60.96" y1="71.12" x2="63.5" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="59.69" y1="71.12" x2="63.5" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="C5" gate="G$1" pin="P$1"/>
 <wire x1="63.5" y1="71.12" x2="73.66" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="73.66" x2="63.5" y2="73.66" width="0.1524" layer="91"/>
@@ -3455,19 +3470,19 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <junction x="15.24" y="109.22"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="GND"/>
+<pinref part="IC3" gate="G$1" pin="GND"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <wire x1="102.87" y1="0" x2="107.95" y2="0" width="0.1524" layer="91"/>
 <pinref part="C8" gate="G$1" pin="P$2"/>
 <wire x1="107.95" y1="0" x2="110.49" y2="0" width="0.1524" layer="91"/>
 <wire x1="107.95" y1="-5.08" x2="107.95" y2="0" width="0.1524" layer="91"/>
 <junction x="107.95" y="0"/>
-<pinref part="U$1" gate="G$1" pin="RESV2"/>
+<pinref part="IC3" gate="G$1" pin="RESV2"/>
 <wire x1="102.87" y1="5.08" x2="107.95" y2="5.08" width="0.1524" layer="91"/>
 <wire x1="107.95" y1="5.08" x2="107.95" y2="0" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="FSYNC"/>
+<pinref part="IC3" gate="G$1" pin="FSYNC"/>
 <wire x1="57.15" y1="-10.16" x2="44.45" y2="-10.16" width="0.1524" layer="91"/>
 <wire x1="44.45" y1="-10.16" x2="44.45" y2="-13.97" width="0.1524" layer="91"/>
 <wire x1="44.45" y1="-13.97" x2="41.91" y2="-13.97" width="0.1524" layer="91"/>
@@ -3484,7 +3499,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <junction x="38.1" y="-7.62"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="GND@3"/>
+<pinref part="IC4" gate="G$1" pin="GND@3"/>
 <pinref part="GND3" gate="1" pin="GND"/>
 <wire x1="193.04" y1="8.89" x2="208.28" y2="8.89" width="0.1524" layer="91"/>
 <pinref part="C22" gate="G$1" pin="P$2"/>
@@ -3493,10 +3508,10 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <junction x="208.28" y="8.89"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="GND@2"/>
+<pinref part="IC4" gate="G$1" pin="GND@2"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 <wire x1="172.72" y1="-13.97" x2="172.72" y2="-15.24" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="GND@1"/>
+<pinref part="IC4" gate="G$1" pin="GND@1"/>
 <wire x1="172.72" y1="-15.24" x2="172.72" y2="-21.59" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="-13.97" x2="165.1" y2="-15.24" width="0.1524" layer="91"/>
 <wire x1="165.1" y1="-15.24" x2="172.72" y2="-15.24" width="0.1524" layer="91"/>
@@ -3571,19 +3586,19 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <junction x="161.29" y="27.94"/>
 </segment>
 <segment>
-<wire x1="15.24" y1="97.79" x2="19.05" y2="97.79" width="0.1524" layer="91"/>
-<wire x1="19.05" y1="97.79" x2="19.05" y2="82.55" width="0.1524" layer="91"/>
-<wire x1="19.05" y1="82.55" x2="12.7" y2="82.55" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="92.71" x2="19.05" y2="92.71" width="0.1524" layer="91"/>
+<wire x1="19.05" y1="92.71" x2="19.05" y2="77.47" width="0.1524" layer="91"/>
+<wire x1="19.05" y1="77.47" x2="12.7" y2="77.47" width="0.1524" layer="91"/>
 <pinref part="GND9" gate="1" pin="GND"/>
-<wire x1="12.7" y1="81.28" x2="12.7" y2="82.55" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="76.2" x2="12.7" y2="77.47" width="0.1524" layer="91"/>
 <pinref part="J1" gate="G$1" pin="GND"/>
 <pinref part="J1" gate="G$1" pin="SHIELD"/>
-<junction x="12.7" y="82.55"/>
+<junction x="12.7" y="77.47"/>
 </segment>
 <segment>
 <pinref part="GND29" gate="1" pin="GND"/>
 <pinref part="L1" gate="G$1" pin="P$1"/>
-<wire x1="138.43" y1="-6.35" x2="138.43" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="135.89" y1="-6.35" x2="135.89" y2="-5.08" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="JP2" gate="G$1" pin="1"/>
@@ -3630,8 +3645,8 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </segment>
 <segment>
 <pinref part="R3" gate="G$1" pin="P$1"/>
-<wire x1="40.64" y1="101.6" x2="41.91" y2="101.6" width="0.1524" layer="91"/>
-<label x="41.91" y="101.6" size="1.016" layer="95" xref="yes"/>
+<wire x1="30.48" y1="93.98" x2="31.75" y2="93.98" width="0.1524" layer="91"/>
+<label x="31.75" y="93.98" size="1.016" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="C10" gate="G$1" pin="P$2"/>
@@ -3666,7 +3681,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <label x="62.23" y="137.16" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="VDD"/>
+<pinref part="IC3" gate="G$1" pin="VDD"/>
 <pinref part="C8" gate="G$1" pin="P$1"/>
 <wire x1="102.87" y1="-12.7" x2="107.95" y2="-12.7" width="0.1524" layer="91"/>
 <wire x1="107.95" y1="-12.7" x2="107.95" y2="-7.62" width="0.1524" layer="91"/>
@@ -3675,7 +3690,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <label x="110.49" y="-12.7" size="1.016" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="VDDIO"/>
+<pinref part="IC3" gate="G$1" pin="VDDIO"/>
 <wire x1="57.15" y1="-2.54" x2="54.61" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="54.61" y1="-2.54" x2="45.72" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="-2.54" x2="45.72" y2="0" width="0.1524" layer="91"/>
@@ -3684,14 +3699,14 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <wire x1="45.72" y1="0" x2="45.72" y2="2.54" width="0.1524" layer="91"/>
 <junction x="45.72" y="0"/>
 <label x="45.72" y="2.54" size="1.016" layer="95" rot="R90" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="RESV"/>
+<pinref part="IC3" gate="G$1" pin="RESV"/>
 <wire x1="57.15" y1="15.24" x2="54.61" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="54.61" y1="15.24" x2="54.61" y2="-2.54" width="0.1524" layer="91"/>
 <junction x="54.61" y="-2.54"/>
 </segment>
 <segment>
 <pinref part="C17" gate="G$1" pin="P$2"/>
-<pinref part="U1" gate="G$1" pin="REGI"/>
+<pinref part="IC4" gate="G$1" pin="REGI"/>
 <wire x1="167.64" y1="35.56" x2="172.72" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="35.56" x2="172.72" y2="21.59" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="35.56" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
@@ -3704,26 +3719,10 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <label x="157.48" y="66.04" size="1.016" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="FLEXI_TX/SCL" class="0">
-<segment>
-<pinref part="IC2" gate="G$1" pin="PB10"/>
-<wire x1="73.66" y1="38.1" x2="55.88" y2="38.1" width="0.1524" layer="91"/>
-<label x="55.88" y="38.1" size="1.4224" layer="95"/>
-</segment>
-</net>
-<net name="FLEXI_RX/SDA" class="0">
-<segment>
-<pinref part="IC2" gate="G$1" pin="PB11"/>
-<wire x1="73.66" y1="35.56" x2="55.88" y2="35.56" width="0.1524" layer="91"/>
-<label x="55.88" y="35.56" size="1.4224" layer="95"/>
-</segment>
-</net>
 <net name="VBUS" class="0">
 <segment>
-<wire x1="15.24" y1="87.63" x2="16.51" y2="87.63" width="0.1524" layer="91"/>
-<wire x1="16.51" y1="87.63" x2="16.51" y2="80.01" width="0.1524" layer="91"/>
-<wire x1="16.51" y1="80.01" x2="34.29" y2="80.01" width="0.1524" layer="91"/>
-<label x="34.29" y="80.01" size="1.016" layer="95" xref="yes"/>
+<wire x1="15.24" y1="82.55" x2="31.75" y2="82.55" width="0.1524" layer="91"/>
+<label x="31.75" y="82.55" size="1.016" layer="95" xref="yes"/>
 <pinref part="J1" gate="G$1" pin="VBUS"/>
 </segment>
 <segment>
@@ -3743,10 +3742,8 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="USB_DM" class="0">
 <segment>
-<label x="34.29" y="87.63" size="1.016" layer="95" xref="yes"/>
-<wire x1="21.59" y1="87.63" x2="21.59" y2="90.17" width="0.1524" layer="91"/>
-<wire x1="21.59" y1="90.17" x2="15.24" y2="90.17" width="0.1524" layer="91"/>
-<wire x1="34.29" y1="87.63" x2="21.59" y2="87.63" width="0.1524" layer="91"/>
+<label x="31.75" y="85.09" size="1.016" layer="95" xref="yes"/>
+<wire x1="31.75" y1="85.09" x2="15.24" y2="85.09" width="0.1524" layer="91"/>
 <pinref part="J1" gate="G$1" pin="D-"/>
 </segment>
 <segment>
@@ -3758,13 +3755,11 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <net name="USB_DP" class="0">
 <segment>
 <pinref part="R3" gate="G$1" pin="P$2"/>
-<wire x1="33.02" y1="95.25" x2="34.29" y2="95.25" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="95.25" x2="33.02" y2="101.6" width="0.1524" layer="91"/>
-<junction x="33.02" y="95.25"/>
-<label x="34.29" y="95.25" size="1.016" layer="95" xref="yes"/>
-<wire x1="21.59" y1="95.25" x2="21.59" y2="92.71" width="0.1524" layer="91"/>
-<wire x1="21.59" y1="92.71" x2="15.24" y2="92.71" width="0.1524" layer="91"/>
-<wire x1="21.59" y1="95.25" x2="33.02" y2="95.25" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="87.63" x2="31.75" y2="87.63" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="87.63" x2="22.86" y2="93.98" width="0.1524" layer="91"/>
+<junction x="22.86" y="87.63"/>
+<label x="31.75" y="87.63" size="1.016" layer="95" xref="yes"/>
+<wire x1="15.24" y1="87.63" x2="22.86" y2="87.63" width="0.1524" layer="91"/>
 <pinref part="J1" gate="G$1" pin="D+"/>
 </segment>
 <segment>
@@ -3876,20 +3871,6 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <label x="153.67" y="102.87" size="1.016" layer="95" xref="yes"/>
 <pinref part="PAD5" gate="1" pin="P"/>
 <wire x1="153.67" y1="102.87" x2="147.32" y2="102.87" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="MAIN_TX" class="0">
-<segment>
-<pinref part="IC2" gate="G$1" pin="PA9"/>
-<wire x1="134.62" y1="43.18" x2="137.16" y2="43.18" width="0.1524" layer="91"/>
-<label x="137.16" y="43.18" size="1.016" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="MAIN_RX" class="0">
-<segment>
-<pinref part="IC2" gate="G$1" pin="PA10"/>
-<wire x1="134.62" y1="45.72" x2="137.16" y2="45.72" width="0.1524" layer="91"/>
-<label x="137.16" y="45.72" size="1.016" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="PWM4" class="0">
@@ -4010,9 +3991,9 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <net name="N$33" class="0">
 <segment>
 <pinref part="IC2" gate="G$1" pin="PD0/OSC_IN"/>
-<wire x1="73.66" y1="78.74" x2="67.31" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="67.31" y1="78.74" x2="67.31" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="67.31" y1="81.28" x2="59.69" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="78.74" x2="72.39" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="72.39" y1="78.74" x2="72.39" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="72.39" y1="81.28" x2="59.69" y2="81.28" width="0.1524" layer="91"/>
 <pinref part="Y1" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -4045,7 +4026,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="MPU_MOSI" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="SDA/SDI"/>
+<pinref part="IC3" gate="G$1" pin="SDA/SDI"/>
 <wire x1="102.87" y1="15.24" x2="105.41" y2="15.24" width="0.1524" layer="91"/>
 <label x="105.41" y="15.24" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4057,7 +4038,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="MPU_CLK" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="SCL/SCLK"/>
+<pinref part="IC3" gate="G$1" pin="SCL/SCLK"/>
 <wire x1="102.87" y1="12.7" x2="105.41" y2="12.7" width="0.1524" layer="91"/>
 <label x="105.41" y="12.7" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4069,7 +4050,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="MPU_CS" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="NCS"/>
+<pinref part="IC3" gate="G$1" pin="NCS"/>
 <wire x1="102.87" y1="10.16" x2="105.41" y2="10.16" width="0.1524" layer="91"/>
 <label x="105.41" y="10.16" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4085,7 +4066,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="MPU_MISO" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="ADO/SDO"/>
+<pinref part="IC3" gate="G$1" pin="ADO/SDO"/>
 <wire x1="57.15" y1="-5.08" x2="55.88" y2="-5.08" width="0.1524" layer="91"/>
 <label x="55.88" y="-5.08" size="1.016" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -4097,7 +4078,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="MPU_INT" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="INT"/>
+<pinref part="IC3" gate="G$1" pin="INT"/>
 <wire x1="57.15" y1="-12.7" x2="55.88" y2="-12.7" width="0.1524" layer="91"/>
 <label x="55.88" y="-12.7" size="1.016" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -4109,14 +4090,14 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="REGOUT"/>
+<pinref part="IC3" gate="G$1" pin="REGOUT"/>
 <pinref part="C3" gate="G$1" pin="P$2"/>
 <wire x1="57.15" y1="-7.62" x2="43.18" y2="-7.62" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="RF_MOSI" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="SDIO"/>
+<pinref part="IC4" gate="G$1" pin="SDIO"/>
 <wire x1="193.04" y1="6.35" x2="195.58" y2="6.35" width="0.1524" layer="91"/>
 <label x="195.58" y="6.35" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4128,7 +4109,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="RF_CLK" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="SCK"/>
+<pinref part="IC4" gate="G$1" pin="SCK"/>
 <wire x1="193.04" y1="1.27" x2="195.58" y2="1.27" width="0.1524" layer="91"/>
 <label x="195.58" y="1.27" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4140,7 +4121,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="RF_CS" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="SCS"/>
+<pinref part="IC4" gate="G$1" pin="SCS"/>
 <wire x1="193.04" y1="-1.27" x2="195.58" y2="-1.27" width="0.1524" layer="91"/>
 <label x="195.58" y="-1.27" size="1.016" layer="95" xref="yes"/>
 </segment>
@@ -4152,7 +4133,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="RF_MISO" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="GIO2"/>
+<pinref part="IC4" gate="G$1" pin="GIO2"/>
 <wire x1="177.8" y1="21.59" x2="177.8" y2="24.13" width="0.1524" layer="91"/>
 <label x="177.8" y="24.13" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -4164,7 +4145,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="RF_IRQ" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="GIO1"/>
+<pinref part="IC4" gate="G$1" pin="GIO1"/>
 <wire x1="180.34" y1="21.59" x2="180.34" y2="24.13" width="0.1524" layer="91"/>
 <label x="180.34" y="24.13" size="1.016" layer="95" rot="R90" xref="yes"/>
 </segment>
@@ -4207,7 +4188,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <wire x1="173.99" y1="-33.02" x2="173.99" y2="-30.48" width="0.1524" layer="91"/>
 <pinref part="Y2" gate="G$1" pin="1"/>
 <wire x1="173.99" y1="-30.48" x2="175.26" y2="-30.48" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="XI"/>
+<pinref part="IC4" gate="G$1" pin="XI"/>
 <wire x1="175.26" y1="-30.48" x2="177.8" y2="-30.48" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="-13.97" x2="175.26" y2="-30.48" width="0.1524" layer="91"/>
 <junction x="175.26" y="-30.48"/>
@@ -4220,7 +4201,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <wire x1="185.42" y1="-30.48" x2="187.96" y2="-30.48" width="0.1524" layer="91"/>
 <wire x1="187.96" y1="-30.48" x2="189.23" y2="-30.48" width="0.1524" layer="91"/>
 <wire x1="189.23" y1="-30.48" x2="189.23" y2="-33.02" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="XO"/>
+<pinref part="IC4" gate="G$1" pin="XO"/>
 <wire x1="177.8" y1="-13.97" x2="177.8" y2="-20.32" width="0.1524" layer="91"/>
 <wire x1="177.8" y1="-20.32" x2="187.96" y2="-20.32" width="0.1524" layer="91"/>
 <wire x1="187.96" y1="-20.32" x2="187.96" y2="-30.48" width="0.1524" layer="91"/>
@@ -4229,14 +4210,14 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$1" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="RFI"/>
+<pinref part="IC4" gate="G$1" pin="RFI"/>
 <pinref part="C13" gate="G$1" pin="P$2"/>
 <wire x1="148.59" y1="3.81" x2="157.48" y2="3.81" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="BPBG"/>
+<pinref part="IC4" gate="G$1" pin="BPBG"/>
 <wire x1="157.48" y1="6.35" x2="151.13" y2="6.35" width="0.1524" layer="91"/>
 <wire x1="151.13" y1="6.35" x2="151.13" y2="11.43" width="0.1524" layer="91"/>
 <pinref part="C12" gate="G$1" pin="P$2"/>
@@ -4245,7 +4226,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$8" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="RSSI"/>
+<pinref part="IC4" gate="G$1" pin="RSSI"/>
 <wire x1="157.48" y1="8.89" x2="153.67" y2="8.89" width="0.1524" layer="91"/>
 <wire x1="153.67" y1="8.89" x2="153.67" y2="19.05" width="0.1524" layer="91"/>
 <pinref part="C11" gate="G$1" pin="P$2"/>
@@ -4254,7 +4235,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$9" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="VT"/>
+<pinref part="IC4" gate="G$1" pin="VT"/>
 <wire x1="170.18" y1="-13.97" x2="170.18" y2="-20.32" width="0.1524" layer="91"/>
 <pinref part="C15" gate="G$1" pin="P$2"/>
 <wire x1="170.18" y1="-20.32" x2="165.1" y2="-20.32" width="0.1524" layer="91"/>
@@ -4274,7 +4255,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$10" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="DVDD"/>
+<pinref part="IC4" gate="G$1" pin="DVDD"/>
 <pinref part="C22" gate="G$1" pin="P$1"/>
 <wire x1="193.04" y1="3.81" x2="208.28" y2="3.81" width="0.1524" layer="91"/>
 <wire x1="208.28" y1="3.81" x2="208.28" y2="5.08" width="0.1524" layer="91"/>
@@ -4282,7 +4263,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$12" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="VDA3"/>
+<pinref part="IC4" gate="G$1" pin="VDA3"/>
 <wire x1="180.34" y1="-13.97" x2="180.34" y2="-17.78" width="0.1524" layer="91"/>
 <wire x1="180.34" y1="-17.78" x2="156.21" y2="-17.78" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="P$1"/>
@@ -4294,7 +4275,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <junction x="180.34" y="-17.78"/>
 <wire x1="156.21" y1="-17.78" x2="156.21" y2="22.86" width="0.1524" layer="91"/>
 <junction x="156.21" y="-17.78"/>
-<pinref part="U1" gate="G$1" pin="VDA1"/>
+<pinref part="IC4" gate="G$1" pin="VDA1"/>
 <wire x1="156.21" y1="22.86" x2="170.18" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="170.18" y1="22.86" x2="170.18" y2="21.59" width="0.1524" layer="91"/>
 <pinref part="C18" gate="G$1" pin="P$2"/>
@@ -4305,7 +4286,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 </net>
 <net name="N$14" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="VDA2"/>
+<pinref part="IC4" gate="G$1" pin="VDA2"/>
 <pinref part="R7" gate="G$1" pin="P$2"/>
 <wire x1="157.48" y1="-1.27" x2="151.13" y2="-1.27" width="0.1524" layer="91"/>
 <wire x1="151.13" y1="-1.27" x2="144.78" y2="-1.27" width="0.1524" layer="91"/>
@@ -4332,11 +4313,11 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <net name="N$4" class="0">
 <segment>
 <pinref part="C13" gate="G$1" pin="P$1"/>
-<wire x1="146.05" y1="3.81" x2="138.43" y2="3.81" width="0.1524" layer="91"/>
+<wire x1="146.05" y1="3.81" x2="135.89" y2="3.81" width="0.1524" layer="91"/>
 <pinref part="L1" gate="G$1" pin="P$2"/>
-<wire x1="138.43" y1="3.81" x2="138.43" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="138.43" y1="3.81" x2="138.43" y2="6.35" width="0.1524" layer="91"/>
-<junction x="138.43" y="3.81"/>
+<wire x1="135.89" y1="3.81" x2="135.89" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="135.89" y1="3.81" x2="135.89" y2="6.35" width="0.1524" layer="91"/>
+<junction x="135.89" y="3.81"/>
 <pinref part="PAD1" gate="P" pin="P"/>
 </segment>
 </net>
