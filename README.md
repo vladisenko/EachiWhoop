@@ -11,3 +11,5 @@ Specifications:
 - Firmware: patched Betaflight
 
 PCB with "2oz 0.8mm" option from [OSH Park](https://oshpark.com/shared_projects/ENvuyO6S).
+
+![pcb on E010 frame](https://github.com/vladisenko/EachiWhoop/raw/master/photo/1.jpg)
