@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -2970,7 +2970,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="C27" library="RC.v2" deviceset="C" device="0402" value="1u"/>
-<part name="R1" library="RC.v2" deviceset="R" device="0402" value="2k2"/>
+<part name="R1" library="RC.v2" deviceset="R" device="0402" value="5k1"/>
 <part name="R2" library="RC.v2" deviceset="R" device="0402" value="1k"/>
 <part name="C3" library="RC.v2" deviceset="C" device="0402" value="10n"/>
 <part name="JP2" library="conn" deviceset="M02" device="1.27MM" value="Boot"/>
@@ -2978,7 +2978,7 @@ WR-COM_USB_Micro Type B_Vertical_THT Micro Type B Vertical THT- Tape &amp; Reel 
 <part name="Y1" library="resonator" deviceset="RESONATOR" device="8MHZ" value="8MHZ"/>
 <part name="Y2" library="thermo" deviceset="FA-" device="3225" value="16 MHz"/>
 <part name="C23" library="RC.v2" deviceset="C" device="0402" value="33p"/>
-<part name="C24" library="RC.v2" deviceset="C" device="0402" value="33p"/>
+<part name="C24" library="RC.v2" deviceset="C" device="0402" value="27p"/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="C16" library="RC.v2" deviceset="C" device="0402" value="120p"/>
 <part name="C17" library="RC.v2" deviceset="C" device="0402" value="1n5"/>

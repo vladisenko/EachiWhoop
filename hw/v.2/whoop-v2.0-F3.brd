@@ -1393,8 +1393,8 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="VALUE" x="3.048" y="26.2128" size="0.3048" layer="28" font="vector" rot="MR180" align="top-center"/>
 </element>
 <element name="C2" library="RC.v2" package="0402" value="0u1" x="-1.651" y="17.907" smashed="yes">
-<attribute name="NAME" x="-1.016" y="18.7706" size="0.3048" layer="25" font="vector" align="bottom-center"/>
-<attribute name="VALUE" x="-0.889" y="18.3134" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
+<attribute name="NAME" x="-1.651" y="18.7706" size="0.3048" layer="25" font="vector" align="bottom-center"/>
+<attribute name="VALUE" x="-1.651" y="18.3134" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
 <element name="Q1" library="cc3d" package="SOT-23" value="AO3401" x="0.889" y="24.257" smashed="yes" rot="R180">
 <attribute name="OC_NEWARK" value="unknown" x="0.889" y="24.257" size="1.016" layer="27" rot="R180" display="off"/>
@@ -1478,14 +1478,14 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="VALUE" x="-2.9718" y="16.891" size="0.3048" layer="27" font="vector" rot="R270" align="top-center"/>
 </element>
 <element name="C1" library="RC.v2" package="0402" value="10n" x="-0.0508" y="17.907" smashed="yes" rot="R180">
-<attribute name="NAME" x="0.508" y="18.7706" size="0.3048" layer="25" font="vector" align="bottom-center"/>
-<attribute name="VALUE" x="0.3556" y="18.3134" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
+<attribute name="NAME" x="0" y="18.7706" size="0.3048" layer="25" font="vector" align="bottom-center"/>
+<attribute name="VALUE" x="-0.0254" y="18.3134" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
 <element name="C27" library="RC.v2" package="0402" value="1u" x="-2.1082" y="10.1092" smashed="yes" rot="R180">
 <attribute name="NAME" x="-3.2258" y="10.1346" size="0.3048" layer="25" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="-3.2258" y="9.7282" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
-<element name="R1" library="RC.v2" package="0402" value="2k2" x="3.81" y="10.8712" smashed="yes">
+<element name="R1" library="RC.v2" package="0402" value="5k1" x="3.81" y="10.8712" smashed="yes">
 <attribute name="NAME" x="4.8768" y="11.049" size="0.3048" layer="25" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="5.0038" y="10.6172" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
@@ -1518,7 +1518,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="NAME" x="5.334" y="4.699" size="0.3048" layer="25" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="5.334" y="4.318" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
-<element name="C24" library="RC.v2" package="0402" value="33p" x="3.937" y="9.271" smashed="yes" rot="R180">
+<element name="C24" library="RC.v2" package="0402" value="27p" x="3.937" y="9.271" smashed="yes" rot="R180">
 <attribute name="NAME" x="5.1562" y="9.4488" size="0.3048" layer="25" font="vector" align="bottom-center"/>
 <attribute name="VALUE" x="5.1308" y="9.017" size="0.3048" layer="27" font="vector" rot="R180" align="top-center"/>
 </element>
