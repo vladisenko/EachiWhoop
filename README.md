@@ -18,7 +18,7 @@ Specifications:
 - Voltage: 1S Lipo battery input
 - Firmware: patched Betaflight
 
-PCB with "2oz 0.8mm" option from [OSH Park](https://oshpark.com/shared_projects/ENvuyO6S).
+PCB with "2oz 0.8mm" option from [OSH Park](https://oshpark.com/shared_projects/v77xm6IP).
 
 
 
