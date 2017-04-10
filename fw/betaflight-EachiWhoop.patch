@@ -1,19 +1,5 @@
 ### Eclipse Workspace Patch 1.0
 #P betaflight
-diff --git src/main/drivers/accgyro_spi_mpu6500.c src/main/drivers/accgyro_spi_mpu6500.c
-old mode 100755
-new mode 100644
-index e1e82e7..3054a66
---- src/main/drivers/accgyro_spi_mpu6500.c
-+++ src/main/drivers/accgyro_spi_mpu6500.c
-@@ -90,7 +90,6 @@
-     case MPU9250_WHO_AM_I_CONST:
-     case MPU9255_WHO_AM_I_CONST:
-         mpuDetected = MPU_9250_SPI;
--        break;
-     case ICM20601_WHO_AM_I_CONST:
-         mpuDetected = ICM_20601_SPI;
-         break;
 diff --git src/main/drivers/rx_a7105.c src/main/drivers/rx_a7105.c
 new file mode 100644
 index 0000000..a50100d
@@ -232,14 +218,13 @@ index 0000000..06bed59
 +
 +#endif /* _RX_A7105_ */
 diff --git src/main/drivers/rx_spi.c src/main/drivers/rx_spi.c
-index d37a91f..e041f81 100644
+index d37a91f..35ad1b2 100644
 --- src/main/drivers/rx_spi.c
 +++ src/main/drivers/rx_spi.c
-@@ -69,6 +69,8 @@
+@@ -69,6 +69,7 @@
      UNUSED(spiType);
      const SPIDevice rxSPIDevice = spiDeviceByInstance(RX_SPI_INSTANCE);
      IOInit(DEFIO_IO(RX_NSS_PIN), OWNER_SPI_CS, rxSPIDevice + 1);
-+    IOConfigGPIO(DEFIO_IO(RX_NSS_PIN), SPI_IO_CS_CFG);
 +    IOConfigGPIO(DEFIO_IO(RX_NSS_PIN), SPI_IO_CS_CFG);
  #endif // USE_RX_SOFTSPI
  
@@ -470,10 +455,10 @@ index 0000000..43f3c34
 +#endif /* SRC_MAIN_RX_FLYSKY_H_ */
 diff --git src/main/rx/flysky_A2.c src/main/rx/flysky_A2.c
 new file mode 100644
-index 0000000..2064173
+index 0000000..dedf203
 --- /dev/null
 +++ src/main/rx/flysky_A2.c
-@@ -0,0 +1,280 @@
+@@ -0,0 +1,279 @@
 +
 +#include <stdbool.h>
 +#include <stdint.h>
@@ -603,8 +588,6 @@ index 0000000..2064173
 +rx_spi_received_e  FlySkyA2DataReceived(uint8_t *payload)
 +{
 +	static uint32_t time_last_pkt = 0;
-+	static uint32_t time_last_telem = 0;
-+	static uint32_t time_meas_err_rate = 0;
 +	static uint32_t timeout = 3850 + 500;
 +	static uint32_t count_tm = 0;
 +	static uint32_t count_pkt = 0;
@@ -640,7 +623,6 @@ index 0000000..2064173
 +						if (send_telemetry)
 +						{
 +							send_telemetry = 0;
-+							time_last_telem = time;
 +							AddTelemetry(packet, getBatteryVoltage()*10, err_rate);
 +							A7105_WriteFIFO(&packet[0], sizeof(packet));
 +							newstate = A7105_TX;
@@ -678,6 +660,8 @@ index 0000000..2064173
 +
 +	if (!bind)
 +	{
++		static uint32_t time_meas_err_rate = 0;
++		static uint32_t time_last_telem = 0;
 +		uint32_t time = micros();
 +
 +		if ((time - time_meas_err_rate) > (3850*100))
@@ -687,8 +671,9 @@ index 0000000..2064173
 +			time_meas_err_rate = time;
 +		}
 +
-+		if ((time - time_last_telem) > 57000UL || count_pkt == 16)
++		if ((time - time_last_telem) > 57000UL)
 +		{
++			time_last_telem = time;
 +			send_telemetry = 1;
 +		}
 +
@@ -732,13 +717,13 @@ index 0000000..2064173
 +{
 +	uint8_t bind = 0xFF;
 +
-+	memcpy (&tx_id[0], &packet[1], TXID_SIZE); // get TX ID
-+	if (packet[11] != 0xFF) memcpy (&channel_map[0], &packet[11], NUMFREQ); // get TX channels
++	memcpy (&tx_id[0], &packet[1], TXID_SIZE);								// get TX ID
++	if (packet[11] != 0xFF) memcpy (&channel_map[0], &packet[11], NUMFREQ);	// get TX channels
 +
-+	memcpy (&packet[5], &rx_id[0], RXID_SIZE); 		// set RX ID
++	memcpy (&packet[5], &rx_id[0], RXID_SIZE);								// set RX ID
 +	memset (&packet[11], 0xFF, 26);
 +
-+	if ( (packet[9] != 0)&&(packet[9] != 1) ) bind = 0; // binded
++	if ( (packet[9] != 0)&&(packet[9] != 1) ) bind = 0;						// binded
 +
 +	return bind;
 +}
@@ -751,7 +736,6 @@ index 0000000..2064173
 +	channel = (channel + 1) & 0x0F;
 +	return tmp;
 +}
-+
 +
 +#endif /* USE_RX_FLYSKY */
 diff --git src/main/rx/flysky_A2.h src/main/rx/flysky_A2.h
@@ -789,7 +773,7 @@ index 6e122a2..264c306 100644
      uint8_t spektrum_sat_bind;              // number of bind pulses for Spektrum satellite receivers
      uint8_t spektrum_sat_bind_autoreset;    // whenever we will reset (exit) binding mode after hard reboot
 diff --git src/main/rx/rx_spi.c src/main/rx/rx_spi.c
-index ac4764f..95ca236 100644
+index ac4764f..559b558 100644
 --- src/main/rx/rx_spi.c
 +++ src/main/rx/rx_spi.c
 @@ -29,7 +29,6 @@
@@ -800,39 +784,16 @@ index ac4764f..95ca236 100644
  #include "rx/rx.h"
  #include "rx/rx_spi.h"
  #include "rx/nrf24_cx10.h"
-@@ -37,7 +36,8 @@
+@@ -37,6 +36,8 @@
  #include "rx/nrf24_v202.h"
  #include "rx/nrf24_h8_3d.h"
  #include "rx/nrf24_inav.h"
--
 +#include "rx/flysky.h"
 +#include "rx/flysky_A2.h"
  
+ 
  uint16_t rxSpiRcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
- STATIC_UNIT_TESTED uint8_t rxSpiPayload[RX_SPI_MAX_PAYLOAD_SIZE];
-@@ -97,6 +97,21 @@
-         protocolInit = h8_3dNrf24Init;
-         protocolDataReceived = h8_3dNrf24DataReceived;
-         protocolSetRcDataFromPayload = h8_3dNrf24SetRcDataFromPayload;
-+#ifdef USE_RX_FLYSKY
-+    case RX_SPI_A7105_FLYSKY:
-+        protocolInit = FlySkyInit;
-+        protocolDataReceived = FlySkyDataReceived;
-+        protocolSetRcDataFromPayload = FlySkySetRcDataFromPayload;
-+        break;
-+#endif
-+#ifdef USE_RX_FLYSKY_A2
-+    case RX_SPI_A7105_FLYSKY_A2:
-+        protocolInit = FlySkyA2Init;
-+        protocolDataReceived = FlySkyA2DataReceived;
-+        protocolSetRcDataFromPayload = FlySkyA2SetRcDataFromPayload;
-+        break;
-+#endif
-+
-         break;
- #endif
- #ifdef USE_RX_INAV
-@@ -106,6 +121,21 @@
+@@ -106,6 +107,20 @@
          protocolSetRcDataFromPayload = inavNrf24SetRcDataFromPayload;
          break;
  #endif
@@ -850,7 +811,6 @@ index ac4764f..95ca236 100644
 +        protocolSetRcDataFromPayload = FlySkyA2SetRcDataFromPayload;
 +        break;
 +#endif
-+
      }
      return true;
  }
